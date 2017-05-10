@@ -14,6 +14,9 @@ class Game {
             return ((new Array(height)).fill(0)).map(colum => {
                 column = (new Array(width)).fill(0)
             })
+        };
+        this.newGameAreaState = function () {
+            return [...this.gameArea]
         }
     }
 
@@ -21,8 +24,17 @@ class Game {
         gameTimer = window.setInterval(() => {this.gameStep()}, this.speed);
     }
 
-    gameStep() {
+    updateArea() {
+        let diffState = this.compareStateArea(this.gameArea, this.newGameAreaState);
+    }
 
+    compareStateArea(oldArea, newArea) {
+        return {'oldDiff': _.difference(oldArea, newArea),
+            'newDiff': _.difference(newArea, oldArea)}
+    }
+
+    gameStep() {
+        this.updateArea();
     }
 
     pause() {
