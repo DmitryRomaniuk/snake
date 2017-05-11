@@ -41,16 +41,13 @@ class Game {
         this.gameArea.forEach((e, i) => {
             e.forEach((el, j) => {
                 if (diffState.oldDiff) {
-                    el = 0;
-                    diff.push({ y: i, x: j, change: el })
+                    diff.push({ y: i, x: j, change: 0 })
                 }
                 if (diffState.newDiff) {
-                    el = 'snake';
-                    diff.push({ y: i, x: j, change: el })
+                    diff.push({ y: i, x: j, change: 'snake' })
                 }
                 if (i === food.y && j === food.x) {
-                    el = 'food';
-                    diff.push({ y: i, x: j, change: el })
+                    diff.push({ y: i, x: j, change: 'food' })
                 }
             });
         });
@@ -160,15 +157,28 @@ class Results {
 let listStartButtons = [...document.getElementsByClassName('start-button')];
 const game = document.getElementById('game');
 const gameHtmlArea = document.getElementById('game-area');
-listStartButtons.map(elem => elem.addEventListener('click', () => {
+
+listStartButtons.map(elem => 
+    elem.addEventListener('click', () => {
+        return helloButtonEventListener()
+    })
+)
+
+document.body.addEventListener('keypress', (e) => {
+    if (e.keyCode === 13 || e.keyCode === 32) {
+        return helloButtonEventListener()
+    }
+    return false
+})
+
+function helloButtonEventListener() {
     let helloPage = game.querySelector('.wrapper-hello');
     let gamePage = game.querySelector('.wrapper-game');
     let resultPage = game.querySelector('.wrapper-result');
     helloPage.setAttribute('style', 'display: none');
     gamePage.setAttribute('style', 'display: block');
     resultPage.setAttribute('style', 'display: none');
-})
-)
+}
 
 document.getElementById('pause-button').addEventListener('click', () => {
     let gamePage = game.querySelector('.wrapper-game');
