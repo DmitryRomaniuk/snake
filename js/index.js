@@ -10,31 +10,83 @@ class Game {
 
     constructor(width = 50, height = 50, speed = 2000) {
         this.speed = speed;
-        this.gameArea = () => {
-            return ((new Array(height)).fill(0)).map(colum => {
-                column = (new Array(width)).fill(0)
+        this.gameArea = (function () {
+            return ((new Array(height)).fill(0)).map(() => {
+                return (new Array(width)).fill(0)
             })
-        };
-        this.newGameAreaState = function () {
-            return [...this.gameArea]
-        }
+        })();
+        this.newGameAreaState = [...this.gameArea];
     }
 
     start() {
-        gameTimer = window.setInterval(() => {this.gameStep()}, this.speed);
+        gameTimer = window.setInterval(() => { this.gameStep() }, this.speed);
+        let areaDiv = document.createElement("div");
+        areaDiv.setAttribute('class', 'game-child');
+        this.gameArea.forEach((e) => {
+            let areaDivRow = document.createElement("div");
+            areaDivRow.setAttribute('class', 'game-child-row');
+            e.forEach(() => {
+                let areaDivCell = document.createElement("div");
+                areaDivCell.setAttribute('class', 'game-child-cell');
+                areaDivRow.appendChild(areaDivCell);
+            });
+            areaDiv.appendChild(areaDivRow);
+        });
+        gameHtmlArea.appendChild(areaDiv);
     }
 
-    updateArea() {
+    updateArea(oldArea, newArea, food) {
         let diffState = this.compareStateArea(this.gameArea, this.newGameAreaState);
+        let diff = [];
+        this.gameArea.forEach((e, i) => {
+            e.forEach((el, j) => {
+                if (diffState.oldDiff) {
+                    el = 0;
+                    diff.push({ y: i, x: j, change: el })
+                }
+                if (diffState.newDiff) {
+                    el = 'snake';
+                    diff.push({ y: i, x: j, change: el })
+                }
+                if (i === food.y && j === food.x) {
+                    el = 'food';
+                    diff.push({ y: i, x: j, change: el })
+                }
+            });
+        });
+        this.updateHTML(diff);
+    }
+
+    updateHTML(diff) {
+        let gameChild = [...gameHtmlArea.children[0].children];
+        diff.forEach((eachObjDiff) => {
+            if (eachObjDiff.change === 0) {
+                gameChild[eachObjDiff.y].children[eachObjDiff.x].setAttribute('class', 'game-child-cell');
+            }
+            if (eachObjDiff.change === 'snake') {
+                gameChild[eachObjDiff.y].children[eachObjDiff.x].setAttribute('class', 'game-child-cell snake-cell');
+            }
+            if (eachObjDiff.change === 'food') {
+                gameChild[eachObjDiff.y].children[eachObjDiff.x].setAttribute('class', 'game-child-cell food-cell');
+            }
+        })
     }
 
     compareStateArea(oldArea, newArea) {
-        return {'oldDiff': _.difference(oldArea, newArea),
-            'newDiff': _.difference(newArea, oldArea)}
+        let diff = []
+        oldArea.forEach((row, i) => {
+            row.forEach((cell, j) => {
+                if (cell !== newArea[i][j]) {
+                    diff.push({ y: j, x: i, change: newArea[i][j] })
+                }
+            })
+        })
+        return diff
     }
 
     gameStep() {
-        this.updateArea();
+        let foodPosition = Food.addFoodToArea(this.gameArea);
+        this.updateArea(this.gameArea, this.newGameAreaState, foodPosition);
     }
 
     pause() {
@@ -78,11 +130,11 @@ class Snake {
 
 class Food {
 
-    addFoodToArea(area) {
+    static addFoodToArea(area) {
         let randomArr = []
         area.forEach((elem, index) => {
             elem.forEach((childElem, childIndex) => {
-                randomArr.push({ col: elem, row: childIndex })
+                randomArr.push({ x: index, y: childIndex })
             })
         })
         return (randomArr.length > 0) ? randomArr[Math.floor(Math.random() * randomArr.length)] :
@@ -106,6 +158,8 @@ class Results {
 }
 
 let listStartButtons = [...document.getElementsByClassName('start-button')];
+const game = document.getElementById('game');
+const gameHtmlArea = document.getElementById('game-area');
 listStartButtons.map(elem => elem.addEventListener('click', () => {
     let helloPage = game.querySelector('.wrapper-hello');
     let gamePage = game.querySelector('.wrapper-game');
@@ -122,3 +176,6 @@ document.getElementById('pause-button').addEventListener('click', () => {
     gamePage.setAttribute('style', 'display: none');
     resultPage.setAttribute('style', 'display: block');
 })
+
+const playGame = new Game();
+playGame.start();
