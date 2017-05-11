@@ -1,9 +1,5 @@
 'use strict';
 
-const DIRECTION = ['left', 'top', 'right', 'down'];
-const CELL_NAME_SNAKE = 'snake';
-const CELL_NAME_FOOD = 'food';
-let userPressKey;
 let gameTimer;
 
 class Game {
@@ -16,10 +12,11 @@ class Game {
             })
         })();
         this.newGameAreaState = [...this.gameArea];
+        this.userPressKey;
+        this.snake = new Snake(this.gameArea);
     }
 
     start() {
-        gameTimer = window.setInterval(() => { this.gameStep() }, this.speed);
         let areaDiv = document.createElement("div");
         areaDiv.setAttribute('class', 'game-child');
         this.gameArea.forEach((e) => {
@@ -32,7 +29,13 @@ class Game {
             });
             areaDiv.appendChild(areaDivRow);
         });
-        gameHtmlArea.appendChild(areaDiv);
+        if (gameHtmlArea.hasChildNodes()) { 
+            const oldchild = gameHtmlArea.children[0]
+            gameHtmlArea.replaceChild(areaDiv, oldchild); 
+        } else {
+            gameTimer = window.setInterval(() => { this.gameStep() }, this.speed);
+            gameHtmlArea.appendChild(areaDiv);
+        }
     }
 
     updateArea(oldArea, newArea, food) {
@@ -82,6 +85,8 @@ class Game {
     }
 
     gameStep() {
+        if (this.userPressKey) { console.log(this.userPressKey); }
+        this.userPressKey = void (0);
         let foodPosition = Food.addFoodToArea(this.gameArea);
         this.updateArea(this.gameArea, this.newGameAreaState, foodPosition);
     }
@@ -100,14 +105,26 @@ class Snake {
     constructor(area) {
         this.lenght = 4;
         this.headPosition = {
-            x: (() => { return Math.floor(area[0].length / 2) })(),
-            y: (() => { return Math.floor(area.length / 2) })()
+            x: Math.floor(area[0].length / 2),
+            y: Math.floor(area.length / 2)
         };
+        this.directionOfMotion = 'right';
+        this.positionEachElement = (() => {
+            // initial place snake, return array objects
+            return ((new Array(this.lenght)).fill(0)).map((e, i) => {
+                return {
+                    x: this.headPosition.x - i,
+                    y: this.headPosition.y,
+                }
+            })
+        })()
     }
 
     increaseLength() {
         this.lenght++
     }
+
+
 
     makeNextStep(area, direction, cellNameSnake) {
         if (direction === 'left' && (this.headPosition.x === 0 ||
@@ -158,17 +175,40 @@ let listStartButtons = [...document.getElementsByClassName('start-button')];
 const game = document.getElementById('game');
 const gameHtmlArea = document.getElementById('game-area');
 
-listStartButtons.map(elem => 
+listStartButtons.map(elem =>
     elem.addEventListener('click', () => {
         return helloButtonEventListener()
     })
 )
 
-document.body.addEventListener('keypress', (e) => {
-    if (e.keyCode === 13 || e.keyCode === 32) {
-        return helloButtonEventListener()
+window.addEventListener('keydown', (event) => {
+    if (event.preventDefaulted) {
+        return; // Do nothing if event already handled
     }
-    return false
+
+    switch (event.code) {
+        case "Enter":
+        case "Space":
+            helloButtonEventListener();
+            break;
+        case "KeyS":
+        case "ArrowDown":
+            playGame.userPressKey = 'down';
+            break;
+        case "KeyW":
+        case "ArrowUp":
+            playGame.userPressKey = 'up';
+            break;
+        case "KeyA":
+        case "ArrowLeft":
+            playGame.userPressKey = 'left';
+            break;
+        case "KeyD":
+        case "ArrowRight":
+            playGame.userPressKey = 'right';
+            break;
+        default: false
+    }
 })
 
 function helloButtonEventListener() {
@@ -178,6 +218,8 @@ function helloButtonEventListener() {
     helloPage.setAttribute('style', 'display: none');
     gamePage.setAttribute('style', 'display: block');
     resultPage.setAttribute('style', 'display: none');
+    const playGame = new Game();
+    playGame.start();
 }
 
 document.getElementById('pause-button').addEventListener('click', () => {
@@ -188,4 +230,3 @@ document.getElementById('pause-button').addEventListener('click', () => {
 })
 
 const playGame = new Game();
-playGame.start();
