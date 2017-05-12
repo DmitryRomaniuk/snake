@@ -6,9 +6,12 @@ class Game {
 
     constructor(width = 50, height = 50, speed = 2000) {
         this.speed = speed;
+        this.snakeName = 'snake';
+        this.foodName = 'food';
+        this.zeroFieldName = 0;
         this.gameArea = (function () {
-            return ((new Array(height)).fill(0)).map(() => {
-                return (new Array(width)).fill(0)
+            return ((new Array(height)).fill(this.zeroFieldName)).map(() => {
+                return (new Array(width)).fill(this.zeroFieldName)
             })
         })();
         this.newGameAreaState = [...this.gameArea];
@@ -29,9 +32,9 @@ class Game {
             });
             areaDiv.appendChild(areaDivRow);
         });
-        if (gameHtmlArea.hasChildNodes()) { 
+        if (gameHtmlArea.hasChildNodes()) {
             const oldchild = gameHtmlArea.children[0]
-            gameHtmlArea.replaceChild(areaDiv, oldchild); 
+            gameHtmlArea.replaceChild(areaDiv, oldchild);
         } else {
             gameTimer = window.setInterval(() => { this.gameStep() }, this.speed);
             gameHtmlArea.appendChild(areaDiv);
@@ -39,18 +42,24 @@ class Game {
     }
 
     updateArea(oldArea, newArea, food) {
+        let snakeStep = this.snake.makeNextStep(this.gameArea, this.userPressKey, this.snakeName);
+        if (!snakeStep) {
+            this.end();
+        } else {
+            this.addSnakeToArea(this.newGameAreaState, snakeStep);
+        }
         let diffState = this.compareStateArea(this.gameArea, this.newGameAreaState);
         let diff = [];
         this.gameArea.forEach((e, i) => {
             e.forEach((el, j) => {
                 if (diffState.oldDiff) {
-                    diff.push({ y: i, x: j, change: 0 })
+                    diff.push({ y: i, x: j, change: this.zeroFieldName })
                 }
                 if (diffState.newDiff) {
-                    diff.push({ y: i, x: j, change: 'snake' })
+                    diff.push({ y: i, x: j, change: this.snakeName })
                 }
                 if (i === food.y && j === food.x) {
-                    diff.push({ y: i, x: j, change: 'food' })
+                    diff.push({ y: i, x: j, change: this.foodName })
                 }
             });
         });
@@ -60,13 +69,13 @@ class Game {
     updateHTML(diff) {
         let gameChild = [...gameHtmlArea.children[0].children];
         diff.forEach((eachObjDiff) => {
-            if (eachObjDiff.change === 0) {
+            if (eachObjDiff.change === this.zeroFieldName) {
                 gameChild[eachObjDiff.y].children[eachObjDiff.x].setAttribute('class', 'game-child-cell');
             }
-            if (eachObjDiff.change === 'snake') {
+            if (eachObjDiff.change === this.snakeName) {
                 gameChild[eachObjDiff.y].children[eachObjDiff.x].setAttribute('class', 'game-child-cell snake-cell');
             }
-            if (eachObjDiff.change === 'food') {
+            if (eachObjDiff.change === this.foodName) {
                 gameChild[eachObjDiff.y].children[eachObjDiff.x].setAttribute('class', 'game-child-cell food-cell');
             }
         })
@@ -126,7 +135,7 @@ class Snake {
 
 
 
-    makeNextStep(area, direction, cellNameSnake) {
+    makeNextStep(area, direction, cellNameSnake, cellNameFood) {
         if (direction === 'left' && (this.headPosition.x === 0 ||
             !!area[this.headPosition.y][this.headPosition.x - 1] === cellNameSnake)) { return false }
         if (direction === 'right' && (this.headPosition.x === area[0].lenght - 1 ||
@@ -136,7 +145,17 @@ class Snake {
         if (direction === 'bottom' && (this.headPosition.x === area.lenght - 1 ||
             !!area[this.headPosition.y + 1][this.headPosition.x] === cellNameSnake)) { return false }
 
-        return true
+        if (direction === 'left') {
+            this.headPosition.x--;
+            this.positionEachElement.unshift({
+                x: this.headPosition.x,
+                y: this.headPosition.y,
+            });
+            if (area[this.headPosition.y][this.headPosition.x - 1] !== cellNameFood) {
+                this.positionEachElement.pop();
+            }
+        }
+        return this.positionEachElement
 
     }
 
