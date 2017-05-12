@@ -4,16 +4,16 @@ let gameTimer;
 
 class Game {
 
-    constructor(width = 50, height = 50, speed = 2000) {
+    constructor(width = 10, height = 10, speed = 100) {
         this.speed = speed;
         this.snakeName = 'snake';
         this.foodName = 'food';
         this.zeroFieldName = 0;
-        this.gameArea = (function () {
-            return ((new Array(height)).fill(this.zeroFieldName)).map(() => {
-                return (new Array(width)).fill(this.zeroFieldName)
+        this.gameArea = (function (zero) {
+            return ((new Array(height)).fill(zero)).map(() => {
+                return (new Array(width)).fill(zero)
             })
-        })();
+        })(this.zeroFieldName);
         this.newGameAreaState = [...this.gameArea];
         this.userPressKey;
         this.snake = new Snake(this.gameArea);
@@ -41,16 +41,29 @@ class Game {
         }
     }
 
+    addSnakeToArea(newGameAreaState, snakePosArr, snakeName) {
+        newGameAreaState.forEach((row, i) => {
+            row.forEach((cell, j) => {
+                if (cell === snakeName) {
+                    cell = this.zeroFieldName;
+                }
+            });
+        });
+        snakePosArr.forEach(pos => {
+            newGameAreaState[pos.y][pos.x] = snakeName
+        });
+    }
+
     updateArea(oldArea, newArea, food) {
-        let snakeStep = this.snake.makeNextStep(this.gameArea, this.userPressKey, this.snakeName);
-        if (!snakeStep) {
+        let snakePosArr = this.snake.makeNextStep(oldArea, this.userPressKey, this.snakeName, food);
+        if (!snakePosArr) {
             this.end();
         } else {
-            this.addSnakeToArea(this.newGameAreaState, snakeStep);
+            this.addSnakeToArea(newArea, snakePosArr);
         }
-        let diffState = this.compareStateArea(this.gameArea, this.newGameAreaState);
+        let diffState = this.compareStateArea(oldArea, newArea, this.snakeName);
         let diff = [];
-        this.gameArea.forEach((e, i) => {
+        oldArea.forEach((e, i) => {
             e.forEach((el, j) => {
                 if (diffState.oldDiff) {
                     diff.push({ y: i, x: j, change: this.zeroFieldName })
@@ -133,9 +146,25 @@ class Snake {
         this.lenght++
     }
 
+    snakeEatFood(foodPos) {
+        if (foodPos.x === this.headPosition.x && foodPos.y === this.headPosition.y) {
+            return true
+        } else {
+            return false
+        }
+    }
 
+    _updatePosSnake(foodPos) {
+        this.positionEachElement.unshift({
+            x: this.headPosition.x,
+            y: this.headPosition.y,
+        });
+        if (!this.snakeEatFood(foodPos)) {
+            this.positionEachElement.pop();
+        }
+    }
 
-    makeNextStep(area, direction, cellNameSnake, cellNameFood) {
+    makeNextStep(area, direction, cellNameSnake, foodPos) {
         if (direction === 'left' && (this.headPosition.x === 0 ||
             !!area[this.headPosition.y][this.headPosition.x - 1] === cellNameSnake)) { return false }
         if (direction === 'right' && (this.headPosition.x === area[0].lenght - 1 ||
@@ -147,13 +176,19 @@ class Snake {
 
         if (direction === 'left') {
             this.headPosition.x--;
-            this.positionEachElement.unshift({
-                x: this.headPosition.x,
-                y: this.headPosition.y,
-            });
-            if (area[this.headPosition.y][this.headPosition.x - 1] !== cellNameFood) {
-                this.positionEachElement.pop();
-            }
+            this._updatePosSnake(foodPos);
+        }
+        if (direction === 'right') {
+            this.headPosition.x++;
+            this._updatePosSnake(foodPos);
+        }
+        if (direction === 'up') {
+            this.headPosition.y--;
+            this._updatePosSnake(foodPos);
+        }
+        if (direction === 'down') {
+            this.headPosition.y++;
+            this._updatePosSnake(foodPos);
         }
         return this.positionEachElement
 
@@ -167,7 +202,8 @@ class Food {
         let randomArr = []
         area.forEach((elem, index) => {
             elem.forEach((childElem, childIndex) => {
-                randomArr.push({ x: index, y: childIndex })
+        console.log(childElem);
+                if (!childElem) randomArr.push({ x: childIndex, y: index })
             })
         })
         return (randomArr.length > 0) ? randomArr[Math.floor(Math.random() * randomArr.length)] :
