@@ -4,8 +4,10 @@
   "description": "game snake",
   "main": "server.js",
   "scripts": {
+    "build": "flow-remove-types js/ -d lib/ && webpack -p --progress",
+    "flow": "flow",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "lint": "eslint -c .eslintrc.js ./js",
+    "lint": "eslint js webpack.config.babel.js --ext .js,.jsx",
     "fixlint": "npm run lint -- --fix",
     "start": "node server.js"
   },
@@ -20,8 +22,23 @@
     "url": "https://github.com/DmitryRomaniuk/snake/issues"
   },
   "homepage": "https://github.com/DmitryRomaniuk/snake#readme",
+  "dependencies": {
+    "babel-polyfill": "^6.23.0"
+  },
   "devDependencies": {
+    "babel-cli": "^6.24.1",
+    "babel-core": "^6.24.1",
+    "babel-eslint": "^7.2.3",
+    "babel-loader": "^7.0.0",
+    "babel-preset-env": "^1.4.0",
+    "babel-preset-flow": "^6.23.0",
     "eslint": "^3.19.0",
-    "node-static": "^0.7.9"
+    "eslint-plugin-compat": "^1.0.2",
+    "eslint-plugin-flowtype": "^2.33.0",
+    "eslint-plugin-import": "^2.2.0",
+    "flow-bin": "^0.46.0",
+    "flow-remove-types": "^1.2.1",
+    "node-static": "^0.7.9",
+    "webpack": "^2.5.1"
   }
 }

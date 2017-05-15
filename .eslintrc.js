@@ -1,22 +1,28 @@
 module.exports = {
     "parserOptions": {
         "ecmaVersion": 6,
-        "sourceType": "script",
+        "sourceType": "module",
         "ecmaFeatures": {
             "impliedStrict": true,
             "experimentalObjectRestSpread": true
         }
     },
-    "extends": "eslint:recommended",
+    "extends": [
+        "eslint:recommended",
+        "plugin:flowtype/recommended"
+    ],
     "env": {
         "browser": true,
-        "commonjs": true,
-        "amd": true,
-        "jasmine": true,
-        "protractor": true,
         "node": true
     },
+    "plugins": [
+        "flowtype",
+        "compat",
+        "import"
+    ],
     "rules": {
+        "flowtype/define-flow-type": 1,
+        "flowtype/use-flow-type": 1,
         "arrow-spacing": ["warn", { "before": true, "after": true }],
         "array-bracket-spacing": ["warn", "never"],
         "comma-spacing": ["warn", { "before": false, "after": true }],
