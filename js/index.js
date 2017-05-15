@@ -1,7 +1,6 @@
 'use strict';
 
 let gameTimer;
-let userPressKeyButton = 'right';
 
 class Game {
 
@@ -26,15 +25,6 @@ class Game {
         this.gamePaused = false;
         this.snake = new Snake(this.newGameAreaState());
         this.resultGame = new Results();
-    }
-
-    setUserPressKey(key) {
-        this.userPressKey = key;
-        this.direction = key;
-    }
-
-    getUserPressKey() {
-        return this.userPressKey;
     }
 
     createHtmlMarkUpGamePlace(){
@@ -66,7 +56,7 @@ class Game {
     }
 
     addSnakeToArea(newGameAreaState, snakePosArr, snakeName) {
-        let gamePlace = newGameAreaState.map(e => { return e.map(el => { return el }) })
+        let gamePlace = newGameAreaState.map(e => { return e.map(el => { return el }) });
         snakePosArr.forEach(pos => {
             gamePlace[pos.y][pos.x] = snakeName
         });
@@ -74,14 +64,14 @@ class Game {
     }
 
     compareStateArea(oldArea, newArea) {
-        let diffAreas = []
+        let diffAreas = [];
         oldArea.forEach((row, i) => {
             return row.forEach((cell, j) => {
                 if (cell !== newArea[i][j]) { 
                     diffAreas.push({ y: i, x: j, change: newArea[i][j] }) 
                 }
             })
-        })
+        });
         return diffAreas
     }
 
@@ -89,7 +79,7 @@ class Game {
         let diffState = this.compareStateArea(oldArea, newArea, this.snakeName);
         diffState.forEach((diffCell) => {
             newArea[diffCell.y][diffCell.x] = diffCell.change
-        })
+        });
         return diffState
     }
 
@@ -107,7 +97,7 @@ class Game {
         })
     }
 
-    getDirection(direction, userPressKeyButton) {
+    static getDirection(direction, userPressKeyButton = direction) {
         if (direction === 'left' && userPressKeyButton === 'right') { return 'left' }
         if (direction === 'right' && userPressKeyButton === 'left') { return 'right' }
         if (direction === 'up' && userPressKeyButton === 'down') { return 'up' }
@@ -116,14 +106,14 @@ class Game {
     }
 
     addFoodToArea(newGamePlace, foodPosition) {
-        let gamePlace = newGamePlace.map(e => { return e.map(el => { return el }) })
+        let gamePlace = newGamePlace.map(e => { return e.map(el => { return el }) });
         gamePlace[foodPosition.y][foodPosition.x] = this.foodName;
         return gamePlace
     }
 
     gameStep() {
         let gamePlaceHtml = [...gameHtmlArea.children[0].children];
-        this.direction = this.getDirection(this.direction, userPressKeyButton);
+        this.direction = Game.getDirection(this.direction, this.userPressKey);
         let newGamePlace = this.addFoodToArea(this.newGameAreaState(), this.foodPosition);
         const snakePosArr = this.snake.makeNextStep(this.gameArea, this.direction, this.snakeName, this.foodPosition);
         if (snakePosArr) { 
@@ -154,11 +144,11 @@ class Game {
     }
 
     end() {
-        if (!this.resultGame.getResult() || this.resultGame.result >= this.resultGame.getResult()) {
-            this.resultGame.saveResult(this.resultGame.result)
+        if (!Results.getResult() || this.resultGame.result >= Results.getResult()) {
+            Results.saveResult(this.resultGame.result)
         }
-        document.getElementById('current-score').textContent = this.resultGame.result;
-        document.getElementById('record-score').textContent = this.resultGame.getResult() || 0;
+        document.getElementById('current-score').textContent = this.resultGame.result.toString();
+        document.getElementById('record-score').textContent = Results.getResult() || 0;
         window.clearInterval(gameTimer);
         goResultPageEventListener();
     }
@@ -188,11 +178,7 @@ class Snake {
     }
 
     snakeEatFood(foodPos) {
-        if (foodPos.x === this.headPosition.x && foodPos.y === this.headPosition.y) {
-            return true
-        } else {
-            return false
-        }
+        return (foodPos.x === this.headPosition.x && foodPos.y === this.headPosition.y)
     }
 
     _updatePosSnake(foodPos) {
@@ -238,12 +224,12 @@ class Snake {
 class Food {
 
     static generateFoodPosition(area) {
-        let randomArr = []
+        let randomArr = [];
         area.forEach((elem, index) => {
             elem.forEach((childElem, childIndex) => {
                 if (!childElem) randomArr.push({ x: childIndex, y: index })
             })
-        })
+        });
         return (randomArr.length > 0) ? randomArr[Math.floor(Math.random() * randomArr.length)] :
             null;
     }
@@ -255,11 +241,11 @@ class Results {
         this.result = 0;
     }
 
-    saveResult(resultGame) {
+    static saveResult(resultGame) {
         localStorage.setItem('resultGame', resultGame)
     }
 
-    getResult() {
+    static getResult() {
         return localStorage.resultGame
     }
 }
@@ -272,7 +258,7 @@ listStartButtons.map(elem =>
     elem.addEventListener('click', () => {
         return helloButtonEventListener()
     })
-)
+);
 
 
 function helloButtonEventListener() {
@@ -282,7 +268,6 @@ function helloButtonEventListener() {
     helloPage.setAttribute('style', 'display: none');
     gamePage.setAttribute('style', 'display: block');
     resultPage.setAttribute('style', 'display: none');
-    const playGame = new Game();
     playGame.start();
 }
 
@@ -293,11 +278,11 @@ function goResultPageEventListener() {
     resultPage.setAttribute('style', 'display: block');
 }
 
-const playGame = new Game();
+let playGame = new Game();
 
 document.getElementById('pause-button').addEventListener('click', () => {
     return playGame.pause();
-})
+});
 
 
 window.addEventListener('keydown', (event) => {
@@ -311,28 +296,20 @@ window.addEventListener('keydown', (event) => {
         break;
     case "KeyS":
     case "ArrowDown":
-        playGame.setUserPressKey('down');
-        userPressKeyButton = 'down';
         playGame.userPressKey = 'down';
         break;
     case "KeyW":
     case "ArrowUp":
-        playGame.setUserPressKey('up');
-        userPressKeyButton = 'up';
         playGame.userPressKey = 'up';
         break;
     case "KeyA":
     case "ArrowLeft":
         playGame.userPressKey = 'left';
-        userPressKeyButton = 'left';
-        playGame.setUserPressKey('left');
         break;
     case "KeyD":
     case "ArrowRight":
         playGame.userPressKey = 'right';
-        userPressKeyButton = 'right';
-        playGame.setUserPressKey('right');
         break;
     default: false
     }
-})
+});
