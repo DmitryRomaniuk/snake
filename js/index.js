@@ -52,6 +52,8 @@ class Game {
             })
         });
         VisualRepresentation.createHtmlMarkUpGamePlace(this.resultGame.result.toString(), this.gameArea);
+        this.userPressKey = void (0);
+        this.direction = 'right';
         this.snake = new Snake(this.newGameAreaState());
         this.gameStep();
         gameTimer = window.setInterval(() => {
