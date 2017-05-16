@@ -13,6 +13,10 @@ class VisualRepresentation {
         document.getElementById('record-score').textContent = score;
     }
 
+    static tooglePauseResumeButton(txt: string) {
+        document.getElementById('pause-button').textContent = txt;
+    }
+
     static createHtmlMarkUpGamePlace(result: string, gameArea: Array<Array<mixed>>) {
         let gameHtmlArea = document.getElementById('game-area');
         let areaDiv = document.createElement("div");

@@ -40,7 +40,7 @@ class Game {
         this.foodPosition = Food.generateFoodPosition(this.gameArea);
         this.userPressKey = 'right';
         this.direction = 'right';
-        this.gamePaused = false;
+        this.gamePaused = true;
         this.snake = new Snake(this.newGameAreaState());
         this.resultGame = new Results();
     }
@@ -56,9 +56,12 @@ class Game {
         this.direction = 'right';
         this.snake = new Snake(this.newGameAreaState());
         this.gameStep();
-        gameTimer = window.setInterval(() => {
-            this.gameStep()
-        }, this.speed);
+        if (this.gamePaused) {
+            this.gamePaused = false;
+            gameTimer = window.setInterval(() => {
+                this.gameStep()
+            }, this.speed);
+        }
     }
 
     setuserPressKey(key) {
@@ -154,11 +157,13 @@ class Game {
     pause() {
         if (this.gamePaused) {
             this.gamePaused = false;
+            VisualRepresentation.tooglePauseResumeButton('Pause');
             gameTimer = window.setInterval(() => {
                 this.gameStep()
             }, this.speed);
         } else {
             this.gamePaused = true;
+            VisualRepresentation.tooglePauseResumeButton('Resume');
             window.clearInterval(gameTimer)
         }
     }
@@ -168,6 +173,7 @@ class Game {
             Results.saveResult(this.resultGame.result)
         }
         window.clearInterval(gameTimer);
+        this.gamePaused = true;
         VisualRepresentation.addFinishGameScore(this.resultGame.result.toString());
         VisualRepresentation.addRecordGameScore(Results.getResult().toString());
         VisualRepresentation.goResultPageEventListener();
