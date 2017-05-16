@@ -6,10 +6,10 @@ class Results {
     }
 
     static saveResult(resultGame: number) {
-        localStorage.setItem('resultGame', resultGame)
+        localStorage.setItem('resultGame', resultGame.toString())
     }
 
-    static getResult(): number {
+    static getResult(): string {
         return localStorage.resultGame;
     }
 }

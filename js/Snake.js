@@ -1,6 +1,12 @@
+// @flow
+
 class Snake {
 
-    constructor(area) {
+    lenght: number;
+    headPosition: { x: number, y: number };
+    positionEachElement: Array<{ x: number, y: number }>;
+
+    constructor(area: Array<Array<mixed>>) {
         this.lenght = 4;
         this.headPosition = {
             x: Math.floor(area[0].length / 2),
@@ -18,14 +24,14 @@ class Snake {
     }
 
     increaseLength() {
-        this.length++
+        this.lenght++
     }
 
-    snakeEatFood(foodPos) {
+    snakeEatFood(foodPos: { x: number, y: number }) {
         return (foodPos.x === this.headPosition.x && foodPos.y === this.headPosition.y)
     }
 
-    _updatePosSnake(foodPos) {
+    _updatePosSnake(foodPos: { x: number, y: number }) {
         this.positionEachElement.unshift({
             x: this.headPosition.x,
             y: this.headPosition.y,
@@ -35,15 +41,23 @@ class Snake {
         }
     }
 
-    makeNextStep(area, direction, cellNameSnake, foodPos) {
+    makeNextStep(area: Array<Array<mixed>>, direction: string, cellNameSnake: string, foodPos: { x: number, y: number }) {
         if (direction === 'left' && (this.headPosition.x === 0 ||
-            area[this.headPosition.y][this.headPosition.x - 1] === cellNameSnake)) { return false }
+            area[this.headPosition.y][this.headPosition.x - 1] === cellNameSnake)) {
+            return false
+        }
         if (direction === 'right' && (this.headPosition.x === area[0].length - 1 ||
-            area[this.headPosition.y][this.headPosition.x + 1] === cellNameSnake)) { return false }
+            area[this.headPosition.y][this.headPosition.x + 1] === cellNameSnake)) {
+            return false
+        }
         if (direction === 'up' && (this.headPosition.y === 0 ||
-            area[this.headPosition.y - 1][this.headPosition.x] === cellNameSnake)) { return false }
+            area[this.headPosition.y - 1][this.headPosition.x] === cellNameSnake)) {
+            return false
+        }
         if (direction === 'down' && (this.headPosition.y === area.length - 1 ||
-            area[this.headPosition.y + 1][this.headPosition.x] === cellNameSnake)) { return false }
+            area[this.headPosition.y + 1][this.headPosition.x] === cellNameSnake)) {
+            return false
+        }
 
         if (direction === 'left') {
             this.headPosition.x--;

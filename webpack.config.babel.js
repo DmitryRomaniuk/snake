@@ -1,7 +1,7 @@
 // @flow
 
-var path = require('path');
-var webpack = require('webpack');
+import path from 'path';
+import webpack from 'webpack';
 
 module.exports = {
     entry: './lib',
@@ -11,12 +11,13 @@ module.exports = {
     },
     module: {
         rules: [
-            { test: /\.(js|jsx)$/, use: 'babel-loader', exclude: /node_modules/ },
+            {test: /\.(js|jsx)$/, use: ['babel-loader', 'source-map-loader'], exclude: /node_modules/},
         ],
     },
+    devtool: 'source-map',
     plugins: [
         new webpack.optimize.OccurrenceOrderPlugin(),
         new webpack.NamedModulesPlugin(),
         new webpack.NoEmitOnErrorsPlugin(),
     ],
-}
+};
