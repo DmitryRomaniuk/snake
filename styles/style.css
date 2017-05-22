@@ -3,6 +3,8 @@
     src: url('../fonts/Roboto-Regular.woff');
 }
 
+/* General: properties should be ordered. F.e., read this: http://codeguide.co/#css-declaration-order */
+
 html {
     height: 100%;
     font-size: 16px;
@@ -17,6 +19,7 @@ body {
     align-items: center;
 }
 
+/* Review: it's not a good idea to use ids for styling */
 #game-area {
     display: flex;
     justify-content: center;

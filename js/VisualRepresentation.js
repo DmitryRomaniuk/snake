@@ -20,13 +20,19 @@ class VisualRepresentation {
     static createHtmlMarkUpGamePlace(result: string, gameArea: Array<Array<mixed>>) {
         let gameHtmlArea = document.getElementById('game-area');
         let areaDiv = document.createElement("div");
+        
+        // Rewiew: it's not a good idea to add class using .setAttribute() method
         areaDiv.setAttribute('class', 'game-child');
         VisualRepresentation.addGameScore(result);
         gameArea.forEach((e) => {
             let areaDivRow = document.createElement("div");
+
+            // Rewiew: it's not a good idea to add class using .setAttribute() method
             areaDivRow.setAttribute('class', 'game-child-row');
             e.forEach(() => {
                 let areaDivCell = document.createElement("div");
+
+                // Rewiew: it's not a good idea to add class using .setAttribute() method
                 areaDivCell.setAttribute('class', 'game-child-cell');
                 areaDivRow.appendChild(areaDivCell);
             });
@@ -45,18 +51,22 @@ class VisualRepresentation {
         let gamePlaceHtml = [...gameHtmlArea.children[0].children];
         diff.forEach((eachObjDiff) => {
             if (eachObjDiff.change === zeroFieldName) {
+                // Rewiew: it's not a good idea to add class using .setAttribute() method
                 gamePlaceHtml[eachObjDiff.y].children[eachObjDiff.x].setAttribute('class', 'game-child-cell');
             }
             if (eachObjDiff.change === snakeName) {
+                // Rewiew: it's not a good idea to add class using .setAttribute() method
                 gamePlaceHtml[eachObjDiff.y].children[eachObjDiff.x].setAttribute('class', 'game-child-cell snake-cell');
             }
             if (eachObjDiff.change === foodName) {
+                // Rewiew: it's not a good idea to add class using .setAttribute() method
                 gamePlaceHtml[eachObjDiff.y].children[eachObjDiff.x].setAttribute('class', 'game-child-cell food-cell');
             }
         })
     }
 
     static addPauseGameEventListener(callback: Function) {
+        // should we add curly braces in the arrow function if we just return something?
         document.getElementById('pause-button').addEventListener('click', () => {
             return callback();
         });
@@ -64,7 +74,10 @@ class VisualRepresentation {
 
     static addStartButtonEventListener(callback: Function) {
         let listStartButtons = [...document.getElementsByClassName('start-button')];
+
+        // why does the .map() method is used here?
         listStartButtons.map(elem =>
+            // should we add curly braces in the arrow function if we just return something?
             elem.addEventListener('click', () => {
                 return VisualRepresentation.startButtonEventListener(callback);
             })
@@ -108,6 +121,8 @@ class VisualRepresentation {
         let helloPage = game.querySelector('.wrapper-hello');
         let gamePage = game.querySelector('.wrapper-game');
         let resultPage = game.querySelector('.wrapper-result');
+
+        // Rewiew: it's not a good idea to add class using .setAttribute() method
         helloPage.setAttribute('style', 'display: none');
         gamePage.setAttribute('style', 'display: block');
         resultPage.setAttribute('style', 'display: none');
@@ -118,6 +133,8 @@ class VisualRepresentation {
         const game = document.getElementById('game');
         let gamePage = game.querySelector('.wrapper-game');
         let resultPage = game.querySelector('.wrapper-result');
+
+        // Rewiew: it's not a good idea to add class using .setAttribute() method
         gamePage.setAttribute('style', 'display: none');
         resultPage.setAttribute('style', 'display: block');
     }

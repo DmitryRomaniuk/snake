@@ -12,6 +12,8 @@ class Snake {
             x: Math.floor(area[0].length / 2),
             y: Math.floor(area.length / 2)
         };
+
+        // Rewiew: Could we move this function into separated method and only call it here?
         this.positionEachElement = ((lenght, headPosition) => {
             // initial place snake, return array objects
             return ((new Array(lenght)).fill(0)).map((e, i) => {
@@ -23,6 +25,7 @@ class Snake {
         })(this.lenght, this.headPosition)
     }
 
+    // Rewiew: Unused method
     increaseLength() {
         this.lenght++
     }
@@ -42,6 +45,7 @@ class Snake {
     }
 
     makeNextStep(area: Array<Array<mixed>>, direction: string, cellNameSnake: string, foodPos: { x: number, y: number }) {
+        // Rewiew: this method should be optimized
         if (direction === 'left' && (this.headPosition.x === 0 ||
             area[this.headPosition.y][this.headPosition.x - 1] === cellNameSnake)) {
             return false
@@ -75,6 +79,8 @@ class Snake {
             this.headPosition.y++;
             this._updatePosSnake(foodPos);
         }
+
+        // Rewiew: is it necessary to return this.positionEachElement?
         return this.positionEachElement
     }
 }
