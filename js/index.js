@@ -22,30 +22,41 @@ class Game {
     snake: Snake;
     resultGame: Results;
 
+    // Rewiew: move game settings to the separated object. options values should be also moved to the constants 
     constructor(width = 20, height = 20, speed = 200) {
         this.speed = speed;
         this.snakeName = 'snake';
         this.foodName = 'food';
         this.zeroFieldName = 0;
+
+        // Rewiew: you can add special method which will generate game field, f.e. generateGameField(args) {}, ...
         this.gameArea = ((zero) => {
             return ((new Array(height)).fill(zero)).map(() => {
                 return (new Array(width)).fill(zero)
             })
         })(this.zeroFieldName);
+
+        // Rewiew: ... and call this method (this.generateGameField(args)) here
         this.newGameAreaState = function (): Array<Array<number>> {
             return ((new Array(height)).fill(this.zeroFieldName)).map(() => {
                 return (new Array(width)).fill(this.zeroFieldName)
             })
         };
         this.foodPosition = Food.generateFoodPosition(this.gameArea);
+
+        // Rewiew: why should we use this in constructor and .start() method? 
         this.userPressKey = 'right';
         this.direction = 'right';
+
         this.gamePaused = true;
+
+        // Rewiew: why should we use this in constructor and .start() method? 
         this.snake = new Snake(this.newGameAreaState());
         this.resultGame = new Results();
     }
 
     start() {
+        // Rewiew: please use separated method that generates game area
         this.gameArea = this.gameArea.map(row => {
             return row.map(() => {
                 return this.zeroFieldName
@@ -69,6 +80,7 @@ class Game {
     }
 
     addSnakeToArea(newGameAreaState, snakePosArr, snakeName) {
+        // Rewiew: please use separated method that generates game area
         let gamePlace = newGameAreaState.map(e => {
             return e.map(el => {
                 return el
@@ -102,6 +114,7 @@ class Game {
 
     static getDirection(direction: string, userPressKeyButton: string = direction) {
         if (direction === 'left' && userPressKeyButton === 'right') {
+            // Review: could we return just a direction in all cases?
             return 'left'
         }
         if (direction === 'right' && userPressKeyButton === 'left') {
@@ -117,6 +130,7 @@ class Game {
     }
 
     addFoodToArea(newGamePlace: Array<Array<mixed>>, foodPosition: { x: number, y: number }) {
+        // Rewiew: please use separated method that generates game place
         let gamePlace = newGamePlace.map(e => {
             return e.map(el => {
                 return el
@@ -131,10 +145,13 @@ class Game {
         let newGamePlace = this.addFoodToArea(this.newGameAreaState(), this.foodPosition);
         const snakePosArr = this.snake.makeNextStep(this.gameArea, this.direction, this.snakeName, this.foodPosition);
         if (snakePosArr) {
+            // Review: 
             newGamePlace = this.addSnakeToArea(newGamePlace, snakePosArr, this.snakeName);
         } else {
             this.end();
         }
+
+        // Review: this part of code could be moved to a separated method
         if (!newGamePlace.some(x => x.some(y => y === this.foodName))) {
             this.foodPosition = Food.generateFoodPosition(newGamePlace);
             if (this.foodPosition === null) {
@@ -146,6 +163,8 @@ class Game {
         }
         const diff = this.updateArea(this.gameArea, newGamePlace);
         VisualRepresentation.updateHTMLgameArea(diff, this.zeroFieldName, this.snakeName, this.foodName);
+
+        // Rewiew: please use separated method that generates game place
         this.gameArea = newGamePlace.map(e => {
             return e.map(el => {
                 return el
@@ -169,6 +188,7 @@ class Game {
     }
 
     end() {
+        // Review: you can add a variables to save Results.getResult() and this.resultGame.result values
         if (!parseInt(Results.getResult()) || this.resultGame.result >= parseInt(Results.getResult())) {
             Results.saveResult(this.resultGame.result)
         }
