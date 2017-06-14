@@ -6,11 +6,11 @@ class Results {
     }
 
     static saveResult(resultGame: number) {
-        localStorage.setItem('resultGame', resultGame.toString())
+        window.localStorage.setItem('resultGame', resultGame.toString())
     }
 
     static getResult(): string {
-        return localStorage.resultGame;
+        return window.localStorage.resultGame;
     }
 }
 export default Results;

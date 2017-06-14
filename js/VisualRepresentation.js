@@ -2,35 +2,35 @@
 class VisualRepresentation {
 
     static addGameScore(score: string) {
-        document.getElementById('game-score').textContent = score;
+        window.document.getElementById('game-score').textContent = score;
     }
 
     static addFinishGameScore(score: string) {
-        document.getElementById('current-score').textContent = score;
+        window.document.getElementById('current-score').textContent = score;
     }
 
     static addRecordGameScore(score: string = '0') {
-        document.getElementById('record-score').textContent = score;
+        window.document.getElementById('record-score').textContent = score;
     }
 
     static tooglePauseResumeButton(txt: string) {
-        document.getElementById('pause-button').textContent = txt;
+        window.document.getElementById('pause-button').textContent = txt;
     }
 
     static createHtmlMarkUpGamePlace(result: string, gameArea: Array<Array<mixed>>) {
-        let gameHtmlArea = document.getElementById('game-area');
-        let areaDiv = document.createElement("div");
+        let gameHtmlArea = window.document.getElementById('game-area');
+        let areaDiv = window.document.createElement("div");
         
         // Rewiew: it's not a good idea to add class using .setAttribute() method
         areaDiv.setAttribute('class', 'game-child');
         VisualRepresentation.addGameScore(result);
         gameArea.forEach((e) => {
-            let areaDivRow = document.createElement("div");
+            let areaDivRow = window.document.createElement("div");
 
             // Rewiew: it's not a good idea to add class using .setAttribute() method
             areaDivRow.setAttribute('class', 'game-child-row');
             e.forEach(() => {
-                let areaDivCell = document.createElement("div");
+                let areaDivCell = window.document.createElement("div");
 
                 // Rewiew: it's not a good idea to add class using .setAttribute() method
                 areaDivCell.setAttribute('class', 'game-child-cell');
@@ -47,7 +47,7 @@ class VisualRepresentation {
     }
 
     static updateHTMLgameArea(diff: Array<{ x: number, y: number }>, zeroFieldName: string, snakeName: string, foodName: string) {
-        let gameHtmlArea = document.getElementById('game-area');
+        let gameHtmlArea = window.document.getElementById('game-area');
         let gamePlaceHtml = [...gameHtmlArea.children[0].children];
         diff.forEach((eachObjDiff) => {
             if (eachObjDiff.change === zeroFieldName) {
@@ -67,13 +67,13 @@ class VisualRepresentation {
 
     static addPauseGameEventListener(callback: Function) {
         // should we add curly braces in the arrow function if we just return something?
-        document.getElementById('pause-button').addEventListener('click', () => {
+        window.document.getElementById('pause-button').addEventListener('click', () => {
             return callback();
         });
     }
 
     static addStartButtonEventListener(callback: Function) {
-        let listStartButtons = [...document.getElementsByClassName('start-button')];
+        let listStartButtons = [...window.document.getElementsByClassName('start-button')];
 
         // why does the .map() method is used here?
         listStartButtons.map(elem =>
@@ -117,7 +117,7 @@ class VisualRepresentation {
     }
 
     static startButtonEventListener(callback: Function) {
-        const game = document.getElementById('game');
+        const game = window.document.getElementById('game');
         let helloPage = game.querySelector('.wrapper-hello');
         let gamePage = game.querySelector('.wrapper-game');
         let resultPage = game.querySelector('.wrapper-result');
@@ -130,7 +130,7 @@ class VisualRepresentation {
     }
 
     static goResultPageEventListener() {
-        const game = document.getElementById('game');
+        const game = window.document.getElementById('game');
         let gamePage = game.querySelector('.wrapper-game');
         let resultPage = game.querySelector('.wrapper-result');
 

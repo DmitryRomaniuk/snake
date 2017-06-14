@@ -25,11 +25,6 @@ class Snake {
         })(this.lenght, this.headPosition)
     }
 
-    // Rewiew: Unused method
-    increaseLength() {
-        this.lenght++
-    }
-
     snakeEatFood(foodPos: { x: number, y: number }) {
         return (foodPos.x === this.headPosition.x && foodPos.y === this.headPosition.y)
     }
