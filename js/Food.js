@@ -2,7 +2,7 @@
 
 class Food {
 
-    static generateFoodPosition(area: Array<Array<mixed>>): { x: number, y: number } | null {
+    static generateFoodPosition(area: Array<Array<mixed>>): { x: number, y: number } {
         let randomArr = [];
         area.forEach((elem, row) => {
             elem.forEach((childElem, column) => {
@@ -10,7 +10,7 @@ class Food {
             })
         });
         return (randomArr.length > 0) ? randomArr[Math.floor(Math.random() * randomArr.length)] :
-            null;
+            { x: -1, y: -1 };
     }
 
 }

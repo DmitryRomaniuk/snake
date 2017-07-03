@@ -21,19 +21,16 @@ class VisualRepresentation {
         let gameHtmlArea = window.document.getElementById('game-area');
         let areaDiv = window.document.createElement("div");
         
-        // Rewiew: it's not a good idea to add class using .setAttribute() method
         areaDiv.setAttribute('class', 'game-child');
         VisualRepresentation.addGameScore(result);
         gameArea.forEach((e) => {
             let areaDivRow = window.document.createElement("div");
 
-            // Rewiew: it's not a good idea to add class using .setAttribute() method
             areaDivRow.setAttribute('class', 'game-child-row');
             e.forEach(() => {
                 let areaDivCell = window.document.createElement("div");
-
-                // Rewiew: it's not a good idea to add class using .setAttribute() method
                 areaDivCell.setAttribute('class', 'game-child-cell');
+                areaDivCell.setAttribute('data-game', '');
                 areaDivRow.appendChild(areaDivCell);
             });
             areaDiv.appendChild(areaDivRow);
@@ -46,48 +43,37 @@ class VisualRepresentation {
         return areaDiv
     }
 
-    static updateHTMLgameArea(diff: Array<{ x: number, y: number }>, zeroFieldName: string, snakeName: string, foodName: string) {
+    static updateHTMLgameArea(diff: Array<{ x: number, y: number, change: any }>, zeroFieldName: number, snakeName: string, foodName: string) {
         let gameHtmlArea = window.document.getElementById('game-area');
         let gamePlaceHtml = [...gameHtmlArea.children[0].children];
         diff.forEach((eachObjDiff) => {
             if (eachObjDiff.change === zeroFieldName) {
-                // Rewiew: it's not a good idea to add class using .setAttribute() method
-                gamePlaceHtml[eachObjDiff.y].children[eachObjDiff.x].setAttribute('class', 'game-child-cell');
+                gamePlaceHtml[eachObjDiff.y].children[eachObjDiff.x].setAttribute('data-game', '');
             }
             if (eachObjDiff.change === snakeName) {
-                // Rewiew: it's not a good idea to add class using .setAttribute() method
-                gamePlaceHtml[eachObjDiff.y].children[eachObjDiff.x].setAttribute('class', 'game-child-cell snake-cell');
+                gamePlaceHtml[eachObjDiff.y].children[eachObjDiff.x].setAttribute('data-game', 'snake-cell');
             }
             if (eachObjDiff.change === foodName) {
-                // Rewiew: it's not a good idea to add class using .setAttribute() method
-                gamePlaceHtml[eachObjDiff.y].children[eachObjDiff.x].setAttribute('class', 'game-child-cell food-cell');
+                gamePlaceHtml[eachObjDiff.y].children[eachObjDiff.x].setAttribute('data-game', 'food-cell');
             }
         })
     }
 
     static addPauseGameEventListener(callback: Function) {
-        // should we add curly braces in the arrow function if we just return something?
-        window.document.getElementById('pause-button').addEventListener('click', () => {
-            return callback();
-        });
+        window.document.getElementById('pause-button').addEventListener('click', () => callback());
     }
 
     static addStartButtonEventListener(callback: Function) {
         let listStartButtons = [...window.document.getElementsByClassName('start-button')];
-
-        // why does the .map() method is used here?
-        listStartButtons.map(elem =>
-            // should we add curly braces in the arrow function if we just return something?
-            elem.addEventListener('click', () => {
-                return VisualRepresentation.startButtonEventListener(callback);
-            })
+        listStartButtons.forEach(elem =>
+            elem.addEventListener('click', () => VisualRepresentation.startButtonEventListener(callback))
         );
     }
 
     static addKeysEventListener(userPressKey: Function, start: Function) {
         window.addEventListener('keydown', (event) => {
             if (event.preventDefaulted) {
-                return; // Do nothing if event already handled
+                return
             }
             switch (event.code) {
             case "Enter":
@@ -122,7 +108,6 @@ class VisualRepresentation {
         let gamePage = game.querySelector('.wrapper-game');
         let resultPage = game.querySelector('.wrapper-result');
 
-        // Rewiew: it's not a good idea to add class using .setAttribute() method
         helloPage.setAttribute('style', 'display: none');
         gamePage.setAttribute('style', 'display: block');
         resultPage.setAttribute('style', 'display: none');
@@ -134,7 +119,6 @@ class VisualRepresentation {
         let gamePage = game.querySelector('.wrapper-game');
         let resultPage = game.querySelector('.wrapper-result');
 
-        // Rewiew: it's not a good idea to add class using .setAttribute() method
         gamePage.setAttribute('style', 'display: none');
         resultPage.setAttribute('style', 'display: block');
     }

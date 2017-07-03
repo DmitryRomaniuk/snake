@@ -16,13 +16,16 @@ let config = {
 
 class Game {
 
+    width: number;
+    height: number;
     speed: number;
     snakeName: string;
     foodName: string;
+    firstDirection: string;
     zeroFieldName: number;
     gameArea: Array<Array<mixed>>;
     newGameAreaState: Function;
-    foodPosition: { x: number, y: number } | null;
+    foodPosition: { x: number, y: number };
     userPressKey: string | void;
     direction: string;
     gamePaused: boolean;
@@ -36,8 +39,8 @@ class Game {
         this.snakeName = 'snake';
         this.foodName = 'food';
         this.zeroFieldName = 0;
-        this.gameArea = this.generateGameField(this.zeroFieldName, height, width);
-        this.newGameAreaState = () => { return this.generateGameField(this.zeroFieldName, height, width) };
+        this.gameArea = this.generateGameField(this.zeroFieldName, this.height, this.width);
+        this.newGameAreaState = () => { return this.generateGameField(this.zeroFieldName, this.height, this.width) };
         this.foodPosition = Food.generateFoodPosition(this.gameArea);
         this.userPressKey = firstDirection;
         this.direction = firstDirection;
@@ -49,6 +52,7 @@ class Game {
     start() {
         this.snake = new Snake(this.newGameAreaState());
         this.gameArea = this.generateGameField(this.zeroFieldName, this.height, this.width);
+        this.resultGame = new Results();
         VisualRepresentation.createHtmlMarkUpGamePlace(this.resultGame.result.toString(), this.gameArea);
         this.userPressKey = void (0);
         this.direction = this.firstDirection;
@@ -65,13 +69,13 @@ class Game {
         this.userPressKey = key
     }
 
-    generateGameField(zero, height, width): Array<Array<number>> {
+    generateGameField(zero, height, width): Array<Array<mixed>> {
         return ((new Array(height)).fill(zero)).map(() => {
             return (new Array(width)).fill(zero)
         })
     }
 
-    cloneGameField(arr): Array<Array<number>> {
+    cloneGameField(arr): Array<Array<mixed>> {
         return arr.map(e => {
             return e.map(el => {
                 return el
@@ -123,8 +127,8 @@ class Game {
         return gamePlace
     }
 
-    checkFoodPosition (newGamePlace: Array<Array<mixed>>): Boolean {
-        return !newGamePlace.some(x => x.some(y => y === this.foodName))
+    checkFoodPosition (newGamePlace: Array<Array<mixed>>): boolean {
+        return !(newGamePlace.some(x => x.some(y => y === this.foodName)));
     }
 
     gameStep() {
@@ -139,7 +143,7 @@ class Game {
 
         if (this.checkFoodPosition(newGamePlace)) {
             this.foodPosition = Food.generateFoodPosition(newGamePlace);
-            if (this.foodPosition === null) {
+            if (this.foodPosition.x === -1 && this.foodPosition.y === -1) {
                 this.end()
             }
             newGamePlace = this.addFoodToArea(newGamePlace, this.foodPosition);

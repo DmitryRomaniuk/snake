@@ -77,10 +77,10 @@ button.bttn {
     
 }
 
-.food-cell {
+[data-game="food-cell"] {
     background-color: green;
 }
 
-.snake-cell {
+[data-game="snake-cell"] {
     background-color: blue;
 }

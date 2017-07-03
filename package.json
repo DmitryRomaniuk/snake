@@ -9,7 +9,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "eslint js webpack.config.babel.js --ext .js,.jsx",
     "fixlint": "npm run lint -- --fix",
-    "start": "node server.js"
+    "start": "webpack-dev-server -d --content-base ./ --port 8050",
+    "devserver": "node server.js"
   },
   "repository": {
     "type": "git",
@@ -36,10 +37,12 @@
     "eslint-plugin-compat": "^1.0.2",
     "eslint-plugin-flowtype": "^2.33.0",
     "eslint-plugin-import": "^2.2.0",
+    "flow-babel-webpack-plugin": "^1.0.1",
     "flow-bin": "^0.46.0",
     "flow-remove-types": "^1.2.1",
     "node-static": "^0.7.9",
     "source-map-loader": "^0.2.1",
-    "webpack": "^2.5.1"
+    "webpack": "^2.5.1",
+    "webpack-dev-server": "^2.5.0"
   }
 }
